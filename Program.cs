@@ -193,6 +193,10 @@ do
         }
         if (choice == "2")
         {
+            var db = new DataContext();
+            List<Category> categories = db.Categories.OrderBy(p => p.CategoryId).ToList();
+            List<Supplier> suppliers = db.Suppliers.OrderBy(p => p.SupplierId).ToList();
+
             logger.Info("Add product option selected");
             Console.WriteLine();
             Console.WriteLine();
@@ -201,10 +205,20 @@ do
             Product product = new();
             Console.Write("Enter Product Name: ");
             product.ProductName = Console.ReadLine()!;
-            Console.Write("Enter Category ID: ");
-            product.UnitsInStock = short.Parse(Console.ReadLine()!);
-            Console.Write("Enter Supplier ID: ");
-            product.UnitsInStock = short.Parse(Console.ReadLine()!);
+            Console.WriteLine("Categories");
+            foreach (var item in categories)
+            {
+                Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
+            }
+            Console.Write("Select product's Category ID: ");
+            product.CategoryId = int.Parse(Console.ReadLine()!);
+            Console.WriteLine("Suppliers");
+            foreach (var item in suppliers)
+            {
+                Console.WriteLine($"{item.SupplierId}) {item.CompanyName}");
+            }
+            Console.Write("Select product's Supplier ID: ");
+            product.SupplierId = int.Parse(Console.ReadLine()!);
             Console.Write("Enter Unit Price: $");
             product.UnitPrice = Decimal.Parse(Console.ReadLine()!);
             Console.Write("Enter Quantity Per Unit: ");
@@ -221,24 +235,32 @@ do
             ValidationContext context = new ValidationContext(product, null, null);
             List<ValidationResult> results = new List<ValidationResult>();
 
-            var isValid = Validator.TryValidateObject(product, context, results, true);
+            bool isValid = Validator.TryValidateObject(product, context, results, true);
+            // check for unique name
+            if (db.Products.Any(c => c.ProductName == product.ProductName))
+            {
+                // generate validation error
+                isValid = false;
+                results.Add(new ValidationResult("Name exists", ["ProductName"]));
+            }
+            if (!categories.Exists(c => c.CategoryId == product.CategoryId))
+            {
+                isValid = false;
+                Console.WriteLine(product.CategoryId);
+                results.Add(new ValidationResult("No such category", ["CategoryID"]));
+            }
+            if (!suppliers.Exists(c => c.SupplierId == product.SupplierId))
+            {
+                isValid = false;
+                Console.WriteLine(product.SupplierId);
+                results.Add(new ValidationResult("No such supplier", ["SupplierID"]));
+            }
             if (isValid)
             {
-                var db = new DataContext();
-                // check for unique name
-                if (db.Products.Any(c => c.ProductName == product.ProductName))
-                {
-                    // generate validation error
-                    isValid = false;
-                    results.Add(new ValidationResult("Name exists", ["ProductName"]));
-                }
-                else
-                {
-                    logger.Info("Validation passed");
-                    
-                }
+                logger.Info("Validation passed");
+                db.addProduct(product);
             }
-            if (!isValid)
+            else
             {
                 foreach (var result in results)
                 {
