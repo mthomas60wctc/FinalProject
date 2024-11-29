@@ -54,10 +54,7 @@ do
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{query.Count()} records returned");
             Console.ForegroundColor = ConsoleColor.Magenta;
-            foreach (var item in query)
-            {
-                Console.WriteLine($"{item.CategoryName} - {item.Description}");
-            }
+            foreach (var item in query) Console.WriteLine($"{item.CategoryName} - {item.Description}");
             Console.ForegroundColor = ConsoleColor.White;
         }
         else if (choice == "2")
@@ -94,10 +91,7 @@ do
             }
             if (!isValid)
             {
-                foreach (var result in results)
-                {
-                    logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
-                }
+                foreach (var result in results) logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
             }
         }
         else if (choice == "3")
@@ -110,10 +104,7 @@ do
 
             Console.WriteLine("Select the category whose products you want to display:");
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            foreach (var item in query)
-            {
-                Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
-            }
+            foreach (var item in query) Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
             Console.ForegroundColor = ConsoleColor.White;
             int id = int.Parse(Console.ReadLine()!);
             Console.Clear();
@@ -122,10 +113,7 @@ do
             Console.WriteLine();
             Category category = db.Categories.Include("Products").FirstOrDefault(c => c.CategoryId == id)!;
             Console.WriteLine($"Category: {category.CategoryName} - {category.Description}");
-            foreach (Product p in category.Products)
-            {
-                Console.WriteLine($"\t{p.ProductName}");
-            }
+            foreach (Product p in category.Products) Console.WriteLine($"\t{p.ProductName}");
         }
         else if (choice == "4")
         {
@@ -138,10 +126,7 @@ do
             foreach (var item in query)
             {
                 Console.WriteLine($"{item.CategoryName}");
-                foreach (Product p in item.Products)
-                {
-                    Console.WriteLine($"\t{p.ProductName}");
-                }
+                foreach (Product p in item.Products) Console.WriteLine($"\t{p.ProductName}");
             }
         }
         else if (String.IsNullOrEmpty(choice))
@@ -206,17 +191,11 @@ do
             Console.Write("Enter Product Name: ");
             product.ProductName = Console.ReadLine()!;
             Console.WriteLine("Categories");
-            foreach (var item in categories)
-            {
-                Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
-            }
+            foreach (var item in categories) Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
             Console.Write("Select product's Category ID: ");
             product.CategoryId = int.Parse(Console.ReadLine()!);
             Console.WriteLine("Suppliers");
-            foreach (var item in suppliers)
-            {
-                Console.WriteLine($"{item.SupplierId}) {item.CompanyName}");
-            }
+            foreach (var item in suppliers) Console.WriteLine($"{item.SupplierId}) {item.CompanyName}");
             Console.Write("Select product's Supplier ID: ");
             product.SupplierId = int.Parse(Console.ReadLine()!);
             Console.Write("Enter Unit Price: $");
@@ -236,23 +215,14 @@ do
             List<ValidationResult> results = new List<ValidationResult>();
 
             bool isValid = Validator.TryValidateObject(product, context, results, true);
-            // check for unique name
-            if (db.Products.Any(c => c.ProductName == product.ProductName))
-            {
-                // generate validation error
-                isValid = false;
-                results.Add(new ValidationResult("Name exists", ["ProductName"]));
-            }
             if (!categories.Exists(c => c.CategoryId == product.CategoryId))
             {
                 isValid = false;
-                Console.WriteLine(product.CategoryId);
                 results.Add(new ValidationResult("No such category", ["CategoryID"]));
             }
             if (!suppliers.Exists(c => c.SupplierId == product.SupplierId))
             {
                 isValid = false;
-                Console.WriteLine(product.SupplierId);
                 results.Add(new ValidationResult("No such supplier", ["SupplierID"]));
             }
             if (isValid)
@@ -262,10 +232,7 @@ do
             }
             else
             {
-                foreach (var result in results)
-                {
-                    logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
-                }
+                foreach (var result in results) logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
             }
 
         }
@@ -274,14 +241,73 @@ do
             logger.Info("Edit product option selected");
             Console.WriteLine();
             Console.WriteLine();
+            var db = new DataContext();
+            List<Product> products = db.Products.OrderBy(p => p.ProductId).ToList();
+            List<Category> categories = db.Categories.OrderBy(p => p.CategoryId).ToList();
+            List<Supplier> suppliers = db.Suppliers.OrderBy(p => p.SupplierId).ToList();
+            Console.WriteLine("Adding Product");
+            // Add product
+            Product product = new();
+            Console.WriteLine("Products");
+            foreach (var item in products) Console.WriteLine($"{item.ProductId}) {item.ProductName}");
+            Console.Write("Select product to edit: ");
+            product.ProductId = int.Parse(Console.ReadLine()!);
+            Console.Write("Enter Product Name: ");
+            product.ProductName = Console.ReadLine()!;
+            Console.WriteLine("Categories");
+            foreach (var item in categories)Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
+            Console.Write("Select product's Category ID: ");
+            product.CategoryId = int.Parse(Console.ReadLine()!);
+            Console.WriteLine("Suppliers");
+            foreach (var item in suppliers) Console.WriteLine($"{item.SupplierId}) {item.CompanyName}");
+            Console.Write("Select product's Supplier ID: ");
+            product.SupplierId = int.Parse(Console.ReadLine()!);
+            Console.Write("Enter Unit Price: $");
+            product.UnitPrice = Decimal.Parse(Console.ReadLine()!);
+            Console.Write("Enter Quantity Per Unit: ");
+            product.QuantityPerUnit = Console.ReadLine();
+            Console.Write("Enter Units In Stock: ");
+            product.UnitsInStock = short.Parse(Console.ReadLine()!);
+            Console.Write("Enter Units On Order: ");
+            product.UnitsOnOrder = short.Parse(Console.ReadLine()!);
+            Console.Write("Enter Reorder Level: ");
+            product.ReorderLevel = short.Parse(Console.ReadLine()!);
+            Console.Write("Discontinued? (y/n - default)");
+            product.Discontinued = Console.ReadLine() == "y";
+
+            ValidationContext context = new ValidationContext(product, null, null);
+            List<ValidationResult> results = new List<ValidationResult>();
+
+            bool isValid = Validator.TryValidateObject(product, context, results, true);
+            if (!products.Exists(c => c.ProductId == product.ProductId))
+            {
+                isValid = false;
+                results.Add(new ValidationResult("No existing product", ["ProductID"]));
+            }
+            if (!categories.Exists(c => c.CategoryId == product.CategoryId))
+            {
+                isValid = false;
+                results.Add(new ValidationResult("No such category", ["CategoryID"]));
+            }
+            if (!suppliers.Exists(c => c.SupplierId == product.SupplierId))
+            {
+                isValid = false;
+                results.Add(new ValidationResult("No such supplier", ["SupplierID"]));
+            }
+            if (isValid)
+            {
+                logger.Info("Validation passed");
+                db.editProduct(product);
+            }
+            else
+            {
+                foreach (var result in results) logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
+            }
 
         }
 
     }
-    else if (choice == "")
-    {
-        break;
-    }
+    else if (choice == "") break;
     Console.WriteLine();
     Console.Write("Press any key to continue...");
     Console.ReadKey();

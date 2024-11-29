@@ -21,4 +21,10 @@ public partial class DataContext : DbContext
     Products.Add(product);
     SaveChanges();
   }
+
+  public void editProduct(Product product){
+    Products.Remove(Products.Where(p => p.ProductId == product.ProductId).First());
+    Products.Add(product);
+    SaveChanges();
+  }
 }
