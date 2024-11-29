@@ -113,7 +113,7 @@ do
             Console.WriteLine();
             Category category = db.Categories.Include("Products").FirstOrDefault(c => c.CategoryId == id)!;
             Console.WriteLine($"Category: {category.CategoryName} - {category.Description}");
-            foreach (Product p in category.Products) Console.WriteLine($"\t{p.ProductName}");
+            foreach (Product p in category.Products.Where(p => !p.Discontinued)) Console.WriteLine($"\t{p.ProductName}");
         }
         else if (choice == "4")
         {
@@ -126,7 +126,7 @@ do
             foreach (var item in query)
             {
                 Console.WriteLine($"{item.CategoryName}");
-                foreach (Product p in item.Products) Console.WriteLine($"\t{p.ProductName}");
+                foreach (Product p in item.Products.Where(p => !p.Discontinued)) Console.WriteLine($"\t{p.ProductName}");
             }
         }
         else if (String.IsNullOrEmpty(choice))
