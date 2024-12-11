@@ -109,7 +109,6 @@ do
             Console.Clear();
             Category category = new();
             category.CategoryId = id;
-            categories.Remove(categories.Where(c => c.CategoryId == id).First());
             Console.Write("Enter New Category Name: ");
             category.CategoryName = Console.ReadLine() ?? "";
             Console.Write("Enter the New Category Description: ");
