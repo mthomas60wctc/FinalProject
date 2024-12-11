@@ -85,7 +85,7 @@ do
                 }
                 else
                 {
-                    logger.Info("Validation passed");
+                    logger.Info($"Validation passed, adding category {category.CategoryName}");
                     db.addCategory(category);
                 }
             }
@@ -227,7 +227,7 @@ do
             }
             if (isValid)
             {
-                logger.Info("Validation passed");
+                logger.Info($"Validation passed, adding product {product.ProductName}");
                 db.addProduct(product);
             }
             else
@@ -296,7 +296,7 @@ do
             }
             if (isValid)
             {
-                logger.Info("Validation passed");
+                logger.Info($"Validation passed, editing product {product.ProductName}");
                 db.editProduct(product);
             }
             else
