@@ -30,6 +30,7 @@ do
         Console.WriteLine("Categories Selected!");
         Console.WriteLine("1) Display categories");
         Console.WriteLine("2) Add category");
+        Console.WriteLine("2) Edit category");
         Console.WriteLine("3) Display Category and related products");
         Console.WriteLine("4) Display all Categories and their related products");
         choice = Console.ReadLine() ?? "";
@@ -96,6 +97,57 @@ do
         }
         else if (choice == "3")
         {
+            logger.Info("Edit Category option selected");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Editing Category");
+            // Select category
+            var db = new DataContext();
+            List<Category> categories = db.Categories.OrderBy(p => p.CategoryId).ToList();
+            foreach (var item in categories) Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
+            int id = int.Parse(Console.ReadLine()!);
+            Console.Clear();
+            Category category = new();
+            category.CategoryId = id;
+            categories.Remove(categories.Where(c => c.CategoryId == id).First());
+            Console.Write("Enter New Category Name: ");
+            category.CategoryName = Console.ReadLine() ?? "";
+            Console.Write("Enter the New Category Description: ");
+            category.Description = Console.ReadLine() ?? "";
+            ValidationContext context = new ValidationContext(category, null, null);
+            List<ValidationResult> results = new List<ValidationResult>();
+
+            var isValid = Validator.TryValidateObject(category, context, results, true);
+            if (isValid)
+            {
+                // make sure id is valid
+                if (!categories.Any(c => c.CategoryId == category.CategoryId))
+                {
+                    // generate validation error
+                    isValid = false;
+                    results.Add(new ValidationResult("Invalid ID", ["category.CategoryId"]));
+                }
+                // make sure name doesnt match anything but the edited category
+                else if (categories.Any(c => c.CategoryId != category.CategoryId && c.CategoryName == category.CategoryName))
+                {
+                    // generate validation error
+                    isValid = false;
+                    results.Add(new ValidationResult("Duplicate Name", ["category.CategoryName"]));
+                }
+                else
+                {
+                    logger.Info($"Validation passed, editing category {category.CategoryName}");
+                    db.editCategory(category);
+                }
+            }
+            if (!isValid)
+            {
+                foreach (var result in results) logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
+            }
+
+        }
+        else if (choice == "4")
+        {
             logger.Info("Display category and related objects option selected");
             Console.WriteLine();
             Console.WriteLine();
@@ -115,7 +167,7 @@ do
             Console.WriteLine($"Category: {category.CategoryName} - {category.Description}");
             foreach (Product p in category.Products.Where(p => !p.Discontinued)) Console.WriteLine($"\t{p.ProductName}");
         }
-        else if (choice == "4")
+        else if (choice == "5")
         {
             logger.Info("Display all Categories and objects option selected");
             Console.WriteLine();

@@ -17,6 +17,12 @@ public partial class DataContext : DbContext
     SaveChanges();
   }
 
+    public void editCategory(Category category){
+    Categories.Remove(Categories.Where(c => c.CategoryId == category.CategoryId).First());
+    Categories.Add(category);
+    SaveChanges();
+  }
+
   public void addProduct(Product product){
     Products.Add(product);
     SaveChanges();
