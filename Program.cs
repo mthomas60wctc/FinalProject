@@ -66,9 +66,9 @@ do
             // Add category
             Category category = new();
             Console.Write("Enter Category Name: ");
-            category.CategoryName = Console.ReadLine()!;
+            category.CategoryName = Console.ReadLine() ?? "";
             Console.Write("Enter the Category Description: ");
-            category.Description = Console.ReadLine();
+            category.Description = Console.ReadLine() ?? "";
             ValidationContext context = new ValidationContext(category, null, null);
             List<ValidationResult> results = new List<ValidationResult>();
 
@@ -189,25 +189,25 @@ do
             // Add product
             Product product = new();
             Console.Write("Enter Product Name: ");
-            product.ProductName = Console.ReadLine()!;
+            product.ProductName = Console.ReadLine() ?? "";
             Console.WriteLine("Categories");
             foreach (var item in categories) Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
             Console.Write("Select product's Category ID: ");
-            product.CategoryId = int.Parse(Console.ReadLine()!);
+            product.CategoryId = int.Parse(Console.ReadLine() ?? "0");
             Console.WriteLine("Suppliers");
             foreach (var item in suppliers) Console.WriteLine($"{item.SupplierId}) {item.CompanyName}");
             Console.Write("Select product's Supplier ID: ");
-            product.SupplierId = int.Parse(Console.ReadLine()!);
+            product.SupplierId = int.Parse(Console.ReadLine() ?? "0");
             Console.Write("Enter Unit Price: $");
-            product.UnitPrice = Decimal.Parse(Console.ReadLine()!);
+            product.UnitPrice = Decimal.Parse(Console.ReadLine() ?? "0");
             Console.Write("Enter Quantity Per Unit: ");
             product.QuantityPerUnit = Console.ReadLine();
             Console.Write("Enter Units In Stock: ");
-            product.UnitsInStock = short.Parse(Console.ReadLine()!);
+            product.UnitsInStock = short.Parse(Console.ReadLine() ?? "0");
             Console.Write("Enter Units On Order: ");
-            product.UnitsOnOrder = short.Parse(Console.ReadLine()!);
+            product.UnitsOnOrder = short.Parse(Console.ReadLine() ?? "0");
             Console.Write("Enter Reorder Level: ");
-            product.ReorderLevel = short.Parse(Console.ReadLine()!);
+            product.ReorderLevel = short.Parse(Console.ReadLine() ?? "0");
             Console.Write("Discontinued? (y/n - default)");
             product.Discontinued = Console.ReadLine() == "y";
 
@@ -251,27 +251,27 @@ do
             Console.WriteLine("Products");
             foreach (var item in products) Console.WriteLine($"{item.ProductId}) {item.ProductName}");
             Console.Write("Select product to edit: ");
-            product.ProductId = int.Parse(Console.ReadLine()!);
+            product.ProductId = int.Parse(Console.ReadLine() ?? "0");
             Console.Write("Enter Product Name: ");
-            product.ProductName = Console.ReadLine()!;
+            product.ProductName = Console.ReadLine() ?? "";
             Console.WriteLine("Categories");
             foreach (var item in categories)Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
             Console.Write("Select product's Category ID: ");
-            product.CategoryId = int.Parse(Console.ReadLine()!);
+            product.CategoryId = int.Parse(Console.ReadLine() ?? "0");
             Console.WriteLine("Suppliers");
             foreach (var item in suppliers) Console.WriteLine($"{item.SupplierId}) {item.CompanyName}");
             Console.Write("Select product's Supplier ID: ");
-            product.SupplierId = int.Parse(Console.ReadLine()!);
+            product.SupplierId = int.Parse(Console.ReadLine() ?? "0");
             Console.Write("Enter Unit Price: $");
-            product.UnitPrice = Decimal.Parse(Console.ReadLine()!);
+            product.UnitPrice = Decimal.Parse(Console.ReadLine() ?? "0");
             Console.Write("Enter Quantity Per Unit: ");
             product.QuantityPerUnit = Console.ReadLine();
             Console.Write("Enter Units In Stock: ");
-            product.UnitsInStock = short.Parse(Console.ReadLine()!);
+            product.UnitsInStock = short.Parse(Console.ReadLine() ?? "0");
             Console.Write("Enter Units On Order: ");
-            product.UnitsOnOrder = short.Parse(Console.ReadLine()!);
+            product.UnitsOnOrder = short.Parse(Console.ReadLine() ?? "0");
             Console.Write("Enter Reorder Level: ");
-            product.ReorderLevel = short.Parse(Console.ReadLine()!);
+            product.ReorderLevel = short.Parse(Console.ReadLine() ?? "0");
             Console.Write("Discontinued? (y/n - default)");
             product.Discontinued = Console.ReadLine() == "y";
 
