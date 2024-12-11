@@ -146,6 +146,7 @@ do
         Console.WriteLine("1) Display products");
         Console.WriteLine("2) Add Product");
         Console.WriteLine("3) Edit Product");
+        Console.WriteLine("4) Display Product Details");
         choice = Console.ReadLine() ?? "";
         Console.Clear();
         if (choice == "1")
@@ -255,7 +256,7 @@ do
             Console.Write("Enter Product Name: ");
             product.ProductName = Console.ReadLine() ?? "";
             Console.WriteLine("Categories");
-            foreach (var item in categories)Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
+            foreach (var item in categories) Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
             Console.Write("Select product's Category ID: ");
             product.CategoryId = int.Parse(Console.ReadLine() ?? "0");
             Console.WriteLine("Suppliers");
@@ -304,6 +305,32 @@ do
                 foreach (var result in results) logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
             }
 
+        }
+        else if (choice == "4")
+        {
+            logger.Info("Display product details option selected");
+            Console.WriteLine();
+            Console.WriteLine();
+            var db = new DataContext();
+            List<Product> products = db.Products.OrderBy(p => p.ProductId).ToList();
+            List<Category> categories = db.Categories.OrderBy(p => p.CategoryId).ToList();
+            List<Supplier> suppliers = db.Suppliers.OrderBy(p => p.SupplierId).ToList();
+            Console.WriteLine("Products");
+            foreach (var item in products) Console.WriteLine($"{item.ProductId}) {item.ProductName}");
+            Console.Write("Select product to edit: ");
+            int productId = int.Parse(Console.ReadLine() ?? "0");
+            Console.Clear();
+            Product selectedProduct = products.Where(p => p.ProductId == productId).First();
+            Console.WriteLine($"Name: {selectedProduct.ProductName}");
+            Console.WriteLine($"Id: {selectedProduct.ProductId}");
+            Console.WriteLine($"Category: {categories.Where(c => c.CategoryId == selectedProduct.CategoryId).First().CategoryName}");
+            Console.WriteLine($"Supplier: {suppliers.Where(c => c.SupplierId == selectedProduct.SupplierId).First().CompanyName}");
+            Console.WriteLine($"Quantity/Unit: {selectedProduct.QuantityPerUnit}");
+            Console.WriteLine($"Unit Price: {selectedProduct.UnitPrice:C2}");
+            Console.WriteLine($"Units in stock: {selectedProduct.UnitsInStock}");
+            Console.WriteLine($"Reorder Level: {selectedProduct.ReorderLevel}");
+            Console.WriteLine($"Units ordered: {selectedProduct.UnitsOnOrder}");
+            Console.WriteLine($"{(selectedProduct.Discontinued ? "DISCONTINUED" : "ACTIVE")}");
         }
 
     }
