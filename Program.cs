@@ -30,9 +30,9 @@ do
         Console.WriteLine("Categories Selected!");
         Console.WriteLine("1) Display categories");
         Console.WriteLine("2) Add category");
-        Console.WriteLine("2) Edit category");
-        Console.WriteLine("3) Display Category and related products");
-        Console.WriteLine("4) Display all Categories and their related products");
+        Console.WriteLine("3) Edit category");
+        Console.WriteLine("4) Display Category and related products");
+        Console.WriteLine("5) Display all Categories and their related products");
         choice = Console.ReadLine() ?? "";
         Console.Clear();
 
@@ -119,7 +119,7 @@ do
             var isValid = Validator.TryValidateObject(category, context, results, true);
             if (isValid)
             {
-                // make sure id is valid
+                // make sure id is indicating a  valid category
                 if (!categories.Any(c => c.CategoryId == category.CategoryId))
                 {
                     // generate validation error
